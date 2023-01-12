@@ -4,6 +4,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="student2")
+/*
+ * Here this is the child entity
+ * */
 public class Student {
 
     @Id
@@ -48,5 +51,14 @@ public class Student {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", mobile='" + mobile + '\'' +
+                '}';
     }
 }

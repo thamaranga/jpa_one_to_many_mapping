@@ -1,5 +1,6 @@
 package com.hasitha.jpa_one_to_many_mapping.resource;
 
+import com.hasitha.jpa_one_to_many_mapping.bo.StudentDepartmentBO;
 import com.hasitha.jpa_one_to_many_mapping.entity.Department;
 import com.hasitha.jpa_one_to_many_mapping.entity.Student;
 import com.hasitha.jpa_one_to_many_mapping.repository.DepartmentRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,6 +37,9 @@ public class TestResource {
         s2.setMobile("0711234567");
         s2.setDepartment(department);
 
+        department.getStudent().add(s1);
+        department.getStudent().add(s2);
+
         Department department2= new Department();
         department2.setName("Maths");
 
@@ -48,29 +53,39 @@ public class TestResource {
         s4.setMobile("0713674126");
         s4.setDepartment(department2);
 
-        //saving parent entity
-        departmentRepository.save(department);
-        departmentRepository.save(department2);
+        department2.getStudent().add(s3);
+        department2.getStudent().add(s4);
 
-        //saving child entities
-       Student stu1= studentRepository.save(s1);
-       Student stu2= studentRepository.save(s2);
-       Student stu3= studentRepository.save(s3);
-       Student stu4= studentRepository.save(s4);
+        //saving parent entity (This will automatically save child data also)
+        Department saved1=departmentRepository.save(department);
+        Department saved2=departmentRepository.save(department2);
 
-        return stu1.getId()+" "+stu1.getName()+" "+stu1.getMobile()+" "+stu1.getDepartment().getName()+"\n"+
-        stu2.getId()+" "+stu2.getName()+" "+stu2.getMobile()+" "+stu2.getDepartment().getName()+"\n"+
-        stu3.getId()+" "+stu3.getName()+" "+stu3.getMobile()+" "+stu3.getDepartment().getName()+"\n"+
-                stu4.getId()+" "+stu4.getName()+" "+stu4.getMobile()+" "+stu4.getDepartment().getName();
+        return saved1.toString()+"\n"+saved2.toString();
+
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/retrieveStd")
     public String retrieveData(){
         Optional<Student> student=studentRepository.findById(Long.parseLong("3"));
         if(student.isPresent()){
             Student stu=student.get();
             Department dep=stu.getDepartment();
             return stu.getId()+" "+stu.getName()+" "+stu.getMobile()+" "+dep.getId()+" "+dep.getName();
+        }else{
+            return "No data found";
+
+        }
+
+    }
+    /*
+     * Since I have mapped bi-directionaly, when query for child entity I get parent
+     * entity data also.
+     * */
+    @GetMapping("/retrieveDept")
+    public String retrieveDeptData(){
+        Optional<Department> department=departmentRepository.findById(Long.parseLong("2"));
+        if(department.isPresent()){
+            return department.get().toString();
         }else{
             return "No data found";
 
@@ -106,6 +121,25 @@ public class TestResource {
 
         }
 
+    }
+    /*Here only child entity data will be deleted. Since I haven't provided CascadeType
+    * inside child entity.*/
+    @GetMapping("/deleteStd")
+    public String deleteStudentData(){
+        Optional<Student> student=studentRepository.findById(Long.parseLong("1"));
+        if(student.isPresent()){
+            Student std= student.get();
+            studentRepository.delete(std);
+            return "Student deleted successfully";
+        }else{
+            return "No data found for  delete";
+
+        }
+
+    }
+    @GetMapping("/joinTest")
+    public List<StudentDepartmentBO> getStudentDepartmentDetails(){
+        return departmentRepository.getStudentDepartmentDetailsWithSQLJoin();
     }
 
 }

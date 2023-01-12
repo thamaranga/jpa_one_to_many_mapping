@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+/*
+* Here this is the parent entity
+* */
 public class Department {
 
     @Id
@@ -37,5 +40,14 @@ public class Department {
 
     public void setStudent(List<Student> student) {
         this.student = student;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", student=" + student +
+                '}';
     }
 }
