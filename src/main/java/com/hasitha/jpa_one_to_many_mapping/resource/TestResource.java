@@ -25,32 +25,32 @@ public class TestResource {
     @GetMapping("/save")
     public String saveData(){
         Department department= new Department();
-        department.setName("Science");
+        department.setName("Accounting");
 
         Student s1= new Student();
         s1.setName("Amal");
-        s1.setMobile("0771234567");
+        s1.setMobile("0771111111");
         s1.setDepartment(department);
 
         Student s2= new Student();
-        s2.setName("Perera");
-        s2.setMobile("0711234567");
+        s2.setName("Wajira");
+        s2.setMobile("0712222222");
         s2.setDepartment(department);
 
         department.getStudent().add(s1);
         department.getStudent().add(s2);
 
         Department department2= new Department();
-        department2.setName("Maths");
+        department2.setName("Biology");
 
         Student s3= new Student();
         s3.setName("Hasitha");
-        s3.setMobile("0713757937");
+        s3.setMobile("0713333333");
         s3.setDepartment(department2);
 
         Student s4= new Student();
         s4.setName("Thamaranga");
-        s4.setMobile("0713674126");
+        s4.setMobile("0714444444");
         s4.setDepartment(department2);
 
         department2.getStudent().add(s3);
@@ -63,10 +63,13 @@ public class TestResource {
         return saved1.toString()+"\n"+saved2.toString();
 
     }
-
+    /*
+     * Since I have mapped bi-directionaly, when query for child entity I get parent
+     * entity data also.
+     * */
     @GetMapping("/retrieveStd")
     public String retrieveData(){
-        Optional<Student> student=studentRepository.findById(Long.parseLong("3"));
+        Optional<Student> student=studentRepository.findById(Long.parseLong("9"));
         if(student.isPresent()){
             Student stu=student.get();
             Department dep=stu.getDepartment();
@@ -77,13 +80,10 @@ public class TestResource {
         }
 
     }
-    /*
-     * Since I have mapped bi-directionaly, when query for child entity I get parent
-     * entity data also.
-     * */
+
     @GetMapping("/retrieveDept")
     public String retrieveDeptData(){
-        Optional<Department> department=departmentRepository.findById(Long.parseLong("2"));
+        Optional<Department> department=departmentRepository.findById(Long.parseLong("5"));
         if(department.isPresent()){
             return department.get().toString();
         }else{
@@ -95,10 +95,10 @@ public class TestResource {
 
     @GetMapping("/update")
     public String updateData(){
-        Optional<Student> student=studentRepository.findById(Long.parseLong("1"));
+        Optional<Student> student=studentRepository.findById(Long.parseLong("11"));
         if(student.isPresent()){
             Student stu=student.get();
-            Optional<Department> dep=departmentRepository.findById(Long.parseLong("2"));
+            Optional<Department> dep=departmentRepository.findById(Long.parseLong("5"));
             stu.setDepartment(dep.get());
             Student updatedStudent=studentRepository.save(stu);
             return updatedStudent.getId()+" "+updatedStudent.getName()+" "+updatedStudent.getMobile()+" "+updatedStudent.getDepartment().getId()+" "+updatedStudent.getDepartment().getName();
@@ -111,7 +111,7 @@ public class TestResource {
 
     @GetMapping("/delete")
     public String deleteData(){
-        Optional<Department> department=departmentRepository.findById(Long.parseLong("2"));
+        Optional<Department> department=departmentRepository.findById(Long.parseLong("6"));
         if(department.isPresent()){
             Department dep= department.get();
             departmentRepository.delete(dep);
@@ -126,7 +126,7 @@ public class TestResource {
     * inside child entity.*/
     @GetMapping("/deleteStd")
     public String deleteStudentData(){
-        Optional<Student> student=studentRepository.findById(Long.parseLong("1"));
+        Optional<Student> student=studentRepository.findById(Long.parseLong("2"));
         if(student.isPresent()){
             Student std= student.get();
             studentRepository.delete(std);
